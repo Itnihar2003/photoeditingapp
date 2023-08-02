@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "20482105397",
+    "project_id": "imageeditingapp-64687",
+    "storage_bucket": "imageeditingapp-64687.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:20482105397:android:2d1200e8435c140d91517c",
+        "android_client_info": {
+          "package_name": "com.example.photoeditingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "20482105397-jkve9ld7nkghfqi0eucdh5gqc9bl6fvh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAsdXbutbSPLQC5o_FtTMUvzuCXTtVzzw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "20482105397-jkve9ld7nkghfqi0eucdh5gqc9bl6fvh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
