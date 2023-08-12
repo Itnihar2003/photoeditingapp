@@ -5,6 +5,7 @@ import 'package:photoeditingapp/createaccount.dart';
 import 'package:photoeditingapp/homepage.dart';
 
 class login extends StatelessWidget {
+  
   login({super.key});
 
   TextEditingController email = TextEditingController();
@@ -36,7 +37,7 @@ class login extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => homepage(),
+                builder: (context) => homepage(email: savedemail,),
               ));
         }
       } on FirebaseAuthException catch (ex) {
@@ -58,7 +59,7 @@ class login extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
+      appBar: AppBar(automaticallyImplyLeading: false,
         title: Text(
           "welcome",
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),

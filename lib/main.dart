@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:photoeditingapp/editingpage.dart';
@@ -15,7 +16,7 @@ void main(List<String> args) async {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:login(),
+      home:(FirebaseAuth.instance.currentUser!=null)? homepage(email:FirebaseAuth.instance.currentUser!.email ,):login(),
     ),
   );
 }

@@ -1,26 +1,37 @@
-import 'dart:html';
+// import 'dart:html';
 
+// import 'dart:html';
+
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:photoeditingapp/homepage.dart';
 import 'package:photoeditingapp/savepage.dart';
+import 'package:uuid/uuid.dart';
 
-class editingpage extends StatefulWidget {
-  editingpage({super.key, this.url2, this.text2});
+class editingpage extends StatelessWidget {
+  editingpage(
+      {super.key, this.url2, this.text2, required this.image, this.collect});
+  final collect;
   final url2;
   final text2;
-
-  @override
-  State<editingpage> createState() => _editingpageState();
-}
-
-class _editingpageState extends State<editingpage> {
-  // List emptylist1 = [];
-
-  // void save1() {
-  //   emptylist1.add(widget.url2);
-  //   setState(() {});
-  // }
+  final image;
+  void save2() async {
+    // UploadTask uploadTask = FirebaseStorage.instance
+    //     .ref()
+    //     .child("editfile")
+    //     .child(Uuid().v1())
+    //     .putFile(image);
+    // TaskSnapshot taskSnapshot = await uploadTask;
+    // String url3 = await taskSnapshot.ref.getDownloadURL();
+    Map<String, dynamic> editdata = {"editimage": image};
+    FirebaseFirestore.instance.collection("editimage").add(editdata);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +41,10 @@ class _editingpageState extends State<editingpage> {
         actions: [
           IconButton(
               onPressed: () {
-                // save1();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => savepage(),
-                    ));
+                save2();
+
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => savepage()));
               },
               icon: Icon(
                 Icons.save,
@@ -48,7 +57,9 @@ class _editingpageState extends State<editingpage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => homepage(),
+                    builder: (context) => homepage(
+                      email: FirebaseAuth.instance.currentUser!.email,
+                    ),
                   ));
             },
             icon: Icon(
@@ -68,7 +79,7 @@ class _editingpageState extends State<editingpage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              widget.text2,
+              text2,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -79,7 +90,7 @@ class _editingpageState extends State<editingpage> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Image.network(widget.url2),
+              child: Image.network(url2),
             ),
           ],
         ),
@@ -93,7 +104,10 @@ class _editingpageState extends State<editingpage> {
         GButton(
           text: "delete",
           icon: Icons.delete,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+            FirebaseFirestore.instance.collection(collect).doc(text2).delete();
+          },
         ),
         GButton(
           text: "edit",
