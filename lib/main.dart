@@ -16,7 +16,11 @@ void main(List<String> args) async {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:(FirebaseAuth.instance.currentUser!=null)? homepage(email:FirebaseAuth.instance.currentUser!.email ,):login(),
+      home: (FirebaseAuth.instance.currentUser != null)
+          ? homepage(
+              email: FirebaseAuth.instance.currentUser!.email,
+            )
+          : login(),
     ),
   );
 }
