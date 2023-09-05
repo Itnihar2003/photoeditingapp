@@ -17,9 +17,9 @@ void main(List<String> args) async {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       home: (FirebaseAuth.instance.currentUser != null)
-          ? homepage(
-              email: FirebaseAuth.instance.currentUser!.email,
-            )
+          ? homepage(email: FirebaseAuth.instance.currentUser!.email)
+              
+            
           : login(),
     ),
   );

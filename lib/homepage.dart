@@ -14,13 +14,15 @@ import 'package:photoeditingapp/savepage.dart';
 import 'package:uuid/uuid.dart';
 
 class homepage extends StatefulWidget {
-  homepage({super.key, this.email});
-  final email;
+  homepage({super.key, required this.email});
+  final String? email;
+
   @override
   State<homepage> createState() => _homepageState();
 }
 
 class _homepageState extends State<homepage> {
+  bool edit = false;
   TextEditingController saveimage = TextEditingController();
   save(BuildContext context) async {
     var saveimage1 = saveimage.text;
@@ -45,9 +47,13 @@ class _homepageState extends State<homepage> {
       TaskSnapshot taskSnapshot = await uploadTask;
       String url = await taskSnapshot.ref.getDownloadURL();
 
-      Map<String, dynamic> data = {"saveas": saveimage1, "url": url};
+      Map<String, dynamic> data = {
+        "saveas": saveimage1,
+        "url": url,
+        "edit": edit
+      };
       await FirebaseFirestore.instance
-          .collection(widget.email)
+          .collection(widget.email!)
           .doc(saveimage1)
           .set(data);
     } else {
@@ -86,13 +92,19 @@ class _homepageState extends State<homepage> {
         child: ListView(
           children: [
             DrawerHeader(
-                child: Icon(
-              Icons.person,
-              size: 80,
+                child: CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.black,
+              child: Icon(
+                Icons.person,
+                size: 80,
+                color: Colors.white,
+              ),
             )),
             StreamBuilder(
               stream: FirebaseFirestore.instance
-                  .collection(widget.email)
+                  .collection(widget.email!)
+                  .doc()
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -124,7 +136,7 @@ class _homepageState extends State<homepage> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                widget.email,
+                                widget.email!,
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 20,
@@ -147,7 +159,7 @@ class _homepageState extends State<homepage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => savepage(
-                          email2: widget.email,
+                          email2: widget.email!,
                         ),
                       ));
                 },
@@ -214,7 +226,7 @@ class _homepageState extends State<homepage> {
                 children: [
                   StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
-                          .collection(widget.email)
+                          .collection(widget.email!)
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
@@ -380,13 +392,6 @@ class _homepageState extends State<homepage> {
                             ))
                       ],
                     ),
-                    // actions: [
-                    //   TextButton(
-                    //       onPressed: () {
-                    //         Navigator.pop(context);
-                    //       },
-                    //       child: Text("close")),
-                    // ],
                   ));
         },
         child: Icon(

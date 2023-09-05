@@ -6,25 +6,29 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:photoeditingapp/editingpage.dart';
+
 import 'package:photoeditingapp/homepage.dart';
 import 'package:uuid/uuid.dart';
 
-class savepage extends StatelessWidget {
-  final email2;
+class savepage extends StatefulWidget {
+  final text3;
+  final String email2;
   savepage({
     super.key,
-    this.email2,
+    required this.email2,
+    this.text3,
   });
 
-  delete(id) {
-     
-      FirebaseFirestore.instance.collection("editimage").doc(id).delete();
-    
-  }
+  @override
+  State<savepage> createState() => _savepageState();
+}
 
-  // final savedimage1;
+class _savepageState extends State<savepage> {
+  List savelist = [];
+
   @override
   Widget build(BuildContext context) {
+    int i;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -50,69 +54,70 @@ class savepage extends StatelessWidget {
       body: Container(
         child: StreamBuilder<QuerySnapshot>(
           stream:
-              FirebaseFirestore.instance.collection("editimage").snapshots(),
+              FirebaseFirestore.instance.collection(widget.email2).snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              //     .data() as Map<String, dynamic>;
+              for (i = 0; i < snapshot.data!.docs.length; i++) {
+                if (snapshot.data!.docs[i].get("edit") == true) {
+                  savelist.add(snapshot.data!.docs[i].get("url"));
+                }
+              }
+
               return Container(
                 height: 5000,
                 child: Container(
-                  color: Colors.transparent,
-                  width: 3000,
-                  height: 240,
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                    ),
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      Map<String, dynamic> imagedata =
-                          snapshot.data!.docs[index].data()
-                              as Map<String, dynamic>;
-                      return Container(
-                        width: 200,
-                        height: 200,
-
-                        child: Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                height: 200,
-                                width: 200,
-                                child: Image.network(
-                                  imagedata["editimage"],
-                                 
-                                ),
-                              ),
+                    color: Colors.transparent,
+                    width: 3000,
+                    height: 240,
+                    child: Container(
+                      height: 200,
+                      width: 200,
+                      child: ListView.builder(
+                        itemCount: savelist.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Container(
+                                    child: Image.network(savelist[index])),
+                                Container(
+                                  child: ListTile(
+                                    title: Text(
+                                      "Saved image:",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          FirebaseFirestore.instance
+                                              .collection(widget.email2)
+                                              .doc(widget.text3)
+                                              .update({"edit": false});
+                                        });
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => homepage(
+                                                    email: widget.email2)));
+                                      },
+                                      icon: Icon(Icons.delete),
+                                      color: Colors.white,
+                                      iconSize: 25,
+                                    ),
+                                    leading: CircleAvatar(
+                                      backgroundImage:
+                                          NetworkImage(savelist[index]),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                            Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  child: IconButton(
-                                      onPressed: () =>
-                                          delete(snapshot.data!.docs[index].id),
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.white,
-                                        size: 30,
-                                      )),
-                                ))
-                          ],
-                        ),
-
-                        // child: Padding(
-                        //   padding: const EdgeInsets.all(8.0),
-                        //   child: Image.network(
-                        //     imagedata["editimage"],
-                        //     fit: BoxFit.fill,
-                        //   ),
-                        // ),
-                      );
-                    },
-                  ),
-                ),
+                          );
+                        },
+                      ),
+                    )),
               );
             } else {
               return Text("nodata");

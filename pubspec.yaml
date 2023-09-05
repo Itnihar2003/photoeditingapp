@@ -43,6 +43,8 @@ dependencies:
   uuid: ^3.0.7
   cloud_firestore: ^4.8.4
   google_nav_bar: ^5.0.6
+  text_editor: ^0.7.0
+  flutter_riverpod: ^2.3.7
   
 
 

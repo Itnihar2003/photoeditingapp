@@ -9,32 +9,46 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:photoeditingapp/editpage.dart';
 import 'package:photoeditingapp/homepage.dart';
 import 'package:photoeditingapp/savepage.dart';
+import 'package:text_editor/text_editor.dart';
 import 'package:uuid/uuid.dart';
 
-class editingpage extends StatelessWidget {
-  editingpage(
-      {super.key, this.url2, this.text2, required this.image, this.collect});
-  final collect;
+class editingpage extends StatefulWidget {
+  editingpage({
+    super.key,
+    this.url2,
+    this.text2,
+    required this.image,
+    required this.collect,
+  });
+  final String? collect;
   final url2;
   final text2;
   final image;
-  void save2() async {
-    // UploadTask uploadTask = FirebaseStorage.instance
-    //     .ref()
-    //     .child("editfile")
-    //     .child(Uuid().v1())
-    //     .putFile(image);
-    // TaskSnapshot taskSnapshot = await uploadTask;
-    // String url3 = await taskSnapshot.ref.getDownloadURL();
-    Map<String, dynamic> editdata = {"editimage": image};
-    FirebaseFirestore.instance.collection("editimage").add(editdata);
+
+  @override
+  State<editingpage> createState() => _editingpageState();
+}
+
+class _editingpageState extends State<editingpage> {
+  // void save2() async {
+
+  save2() {
+    setState(() {
+      FirebaseFirestore.instance
+          .collection(widget.collect!)
+          .doc(widget.text2)
+          .update({"edit": true});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    int i;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -43,8 +57,13 @@ class editingpage extends StatelessWidget {
               onPressed: () {
                 save2();
 
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => savepage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => savepage(
+                              email2: widget.collect!,
+                              text3: widget.text2,
+                            )));
               },
               icon: Icon(
                 Icons.save,
@@ -52,6 +71,7 @@ class editingpage extends StatelessWidget {
                 size: 25,
               ))
         ],
+
         leading: IconButton(
             onPressed: () {
               Navigator.push(
@@ -79,7 +99,7 @@ class editingpage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              text2,
+              widget.text2,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -90,7 +110,7 @@ class editingpage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Image.network(url2),
+              child: Image.network(widget.url2),
             ),
           ],
         ),
@@ -106,13 +126,24 @@ class editingpage extends StatelessWidget {
           icon: Icons.delete,
           onPressed: () {
             Navigator.pop(context);
-            FirebaseFirestore.instance.collection(collect).doc(text2).delete();
+            FirebaseFirestore.instance
+                .collection(widget.collect!)
+                .doc(widget.text2)
+                .delete();
           },
         ),
         GButton(
           text: "edit",
           icon: Icons.edit,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => editpage(
+                    url3: widget.image,
+                  ),
+                ));
+          },
         ),
         GButton(
           text: "crop",
